@@ -1,23 +1,115 @@
 <!DOCTYPE html>
 <html lang="en" style="height:100%">
-
-<head>
+  <head>
     <meta charSet="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="Artificial intelligence with Mihok from TorontoJS, building on basic knowledge we will discover and build Neural Networks from scratch to get a better understanding of how they work." />
+    <meta
+      name="description"
+      content="Artificial intelligence with Mihok from TorontoJS, building on basic knowledge we will discover and build Neural Networks from scratch to get a better understanding of how they work."
+    />
     <title>JS Workshop</title>
     <script type="text/javascript" src="helpers/manifest.lib.js"></script>
     <script type="text/javascript" src="helpers/math.lib.js"></script>
     <script type="text/javascript" src="helpers/data.lib.js"></script>
-</head>
+  </head>
 
-<body>
-  <script type="text/javascript" src="helpers/renderers.lib.js"></script>
-  <script type="text/javascript">
+  <body>
+    <script type="text/javascript" src="helpers/renderers.lib.js"></script>
+    <script type="text/javascript">
+      // Welcome to TorontoJS Workshop :)
+      const H1 = 0;
+      const H2 = 1;
+      const O1 = 2;
 
-// Welcome to TorontoJS Workshop :) 
+      const W1 = 0;
+      const W2 = 1;
+      const W3 = 2;
+      const W4 = 3;
+      const W5 = 4;
+      const W6 = 5;
 
-  </script>
-</body>
+      const I1 = 0;
+      const I2 = 1;
 
+      class Network {
+        biases = [];
+        weights = [];
+        hidden = [];
+        output;
+
+        constructor(weights = [], biases = [], activatorFn) {
+          this.biases = biases;
+          this.weights = weights;
+          this.hidden = [
+            new Neuron(
+              [this.weights[W1], this.weights[W2]],
+              this.biases[H1],
+              activatorFn
+            ),
+            new Neuron(
+              [this.weights[W3], this.weights[W4]],
+              this.biases[H2],
+              activatorFn
+            )
+          ];
+          this.output = new Neuron(
+            [this.weights[W5], this.weights[W6]],
+            this.biases[O1],
+            activatorFn
+          );
+        }
+
+        query(inputs = []) {
+          let params = [];
+          for (let h in this.hidden) {
+            params.push(this.hidden[h].fire(inputs));
+          }
+          return this.output.fire(params);
+        }
+      }
+
+      class Neuron {
+        bias;
+        weights;
+        activatorFn;
+
+        constructor(weights = [], bias = 0, activateFn) {
+          this.bias = bias;
+          this.weights = weights;
+          this.activatorFn = activateFn;
+        }
+
+        sum(inputs = []) {
+          let buffer = [];
+          let output = 0;
+
+          for (let i in inputs) {
+            buffer[i] = inputs[i] * this.weights[i];
+          }
+
+          for (let b in buffer) {
+            output += buffer[b];
+          }
+
+          output += this.bias;
+
+          return output;
+        }
+
+        fire(inputs = []) {
+          let output = 0;
+          output = this.sum(inputs);
+          let result = this.activatorFn(output);
+
+          return result;
+        }
+      }
+
+      const w = [0, 1, 0, 1, 0, 1];
+      const b = [0, 0, 0];
+      const nn = new Network(w, b, Math.sigmoid);
+      const x = [2, 3];
+      console.log("Run network against input:", nn.query(x));
+    </script>
+  </body>
 </html>
